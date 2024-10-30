@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<SqlWorkbenchSqlProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="XE">
+  <Items>
+    <LogicalFolder Name="Connections" Type="2" Sorted="true">
+      <Items>
+        <ConnectionNode Name="SOTIVOLI:SOTIVOLI\sotiv">
+          <Created>2024-10-30T12:43:56.7396004+03:00</Created>
+          <Type>SQL</Type>
+          <Server>SOTIVOLI</Server>
+          <UserName />
+          <Authentication>Windows Authentication</Authentication>
+          <InitialDB>INT_DEM</InitialDB>
+          <LoginTimeout>30</LoginTimeout>
+          <TrustServerCertificate>True</TrustServerCertificate>
+          <HostNameInServerCertificate />
+          <EncryptionOption>True</EncryptionOption>
+          <ExecutionTimeout>0</ExecutionTimeout>
+          <ConnectionProtocol>NotSpecified</ConnectionProtocol>
+          <ApplicationName>Microsoft SQL Server Management Studio - Query</ApplicationName>
+        </ConnectionNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="Queries" Type="0" Sorted="true">
+      <Items>
+        <FileNode Name="XE_CheckParams Коррекция параметра @Table по @Server и справочнику XEd_Set.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>XE_CheckParams Коррекция параметра @Table по @Server и справочнику XEd_Set.sql</FullPath>
+        </FileNode>
+        <FileNode Name="XE_Clear Очистка таблиц от архивных данных.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>XE_Clear Очистка таблиц от архивных данных.sql</FullPath>
+        </FileNode>
+        <FileNode Name="XE_Convert Конвертация данных из таблиц Profiler или XE 4.4.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>XE_Convert Конвертация данных из таблиц Profiler или XE 4.4.sql</FullPath>
+        </FileNode>
+        <FileNode Name="XE_Count_Dummy Запрос числа операций в JDE.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>XE_Count_Dummy Запрос числа операций в JDE.sql</FullPath>
+        </FileNode>
+        <FileNode Name="XE_Count_JDE Запрос числа операций в JDE.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>XE_Count_JDE Запрос числа операций в JDE.sql</FullPath>
+        </FileNode>
+        <FileNode Name="XE_Daily Ежедневный сбор данных.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>XE_Daily Ежедневный сбор данных.sql</FullPath>
+        </FileNode>
+        <FileNode Name="XE_Day Создание архива топ запросов.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>XE_Day Создание архива топ запросов.sql</FullPath>
+        </FileNode>
+        <FileNode Name="XE_ExecLog Выполненние процедуры с журналированием.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>XE_ExecLog Выполненние процедуры с журналированием.sql</FullPath>
+        </FileNode>
+        <FileNode Name="XE_Import_Profile Импорт данных Profiler за период.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>XE_Import_Profile Импорт данных Profiler за период.sql</FullPath>
+        </FileNode>
+        <FileNode Name="XE_Import_XE44 Импорт данных XE 4.4 за период.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>XE_Import_XE44 Импорт данных XE 4.4 за период.sql</FullPath>
+        </FileNode>
+        <FileNode Name="XE_Install Создание архивных таблиц и сессии XE.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SOTIVOLI:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SOTIVOLI</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>XE_Install Создание архивных таблиц и сессии XE.sql</FullPath>
+        </FileNode>
+        <FileNode Name="XE_TextData Парсинг поля TextData и формирование справочников.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>XE_TextData Парсинг поля TextData и формирование справочников.sql</FullPath>
+        </FileNode>
+        <FileNode Name="XE_TopSum Создание архива топ запросов.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>XE_TopSum Создание архива топ запросов.sql</FullPath>
+        </FileNode>
+        <FileNode Name="XE_Xel Создание архива всех текущих запросов.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>XE_Xel Создание архива всех текущих запросов.sql</FullPath>
+        </FileNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="Miscellaneous" Type="3" Sorted="true">
+      <Items>
+        <FileNode Name="Report view.xlsx">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>Report view.xlsx</FullPath>
+        </FileNode>
+        <FileNode Name="XE Изменения в версии.docx">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>XE Изменения в версии.docx</FullPath>
+        </FileNode>
+        <FileNode Name="Общее описание.docx">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>Общее описание.docx</FullPath>
+        </FileNode>
+        <FileNode Name="Общее описание.pdf">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>Общее описание.pdf</FullPath>
+        </FileNode>
+        <FileNode Name="Схема информационных потоков XE.vsdx">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>Схема информационных потоков XE.vsdx</FullPath>
+        </FileNode>
+      </Items>
+    </LogicalFolder>
+  </Items>
+</SqlWorkbenchSqlProject>
