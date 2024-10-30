@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # SQL Server Management Studio Solution File, Format Version 20.00
 VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "XE", "XE.ssmssqlproj", "{A2BA7797-5F65-4741-98B6-2884024D3F30}"
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "XE", "XE\XE.ssmssqlproj", "{A2BA7797-5F65-4741-98B6-2884024D3F30}"
 EndProject
-Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "BaReTa", "..\BaReTa\BaReTa.ssmssqlproj", "{EEF0FD37-674D-490B-A484-90A10AC921C0}"
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "BaReTa", "BaReTa\BaReTa.ssmssqlproj", "{EEF0FD37-674D-490B-A484-90A10AC921C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,8 +13,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{A2BA7797-5F65-4741-98B6-2884024D3F30}.Default|Default.ActiveCfg = Default
-		{BC1869A5-9778-47B6-8615-0145FEFC7AC7}.Default|Default.ActiveCfg = Default
 		{EEF0FD37-674D-490B-A484-90A10AC921C0}.Default|Default.ActiveCfg = Default
+		{1A2D2CB5-EB42-4993-AD08-D5B56B52E55D}.Default|Default.ActiveCfg = Default
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
