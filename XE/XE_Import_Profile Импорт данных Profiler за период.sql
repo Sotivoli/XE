@@ -26,7 +26,7 @@ GO
 -- ********** Step 0: Инициализация ********** --
 		
 SET ANSI_NULLS ON;SET QUOTED_IDENTIFIER ON;
-Declare	 @Version		as nvarchar(30)	= N'XE_Import_Profile v5.0p'
+Declare	 @Version		as nvarchar(30)	= N'XE_Import_Profile v5.1'
 		,@Cmd			as nvarchar(max)
 		,@Date			as date
 		,@MaxDate		as date
@@ -41,10 +41,11 @@ Declare	 @Version		as nvarchar(30)	= N'XE_Import_Profile v5.0p'
 
 
 -- **********  Step 1: Проверка параметров вызова ********** --
--- 0.2 Проверка корректности и модификация входных данных
+-- 1.2 Проверка корректности и модификация входных данных
 
-exec [dbo].[XE_CheckParams]	 @Session = @Session output
-							,@Table  = @Table  output
+exec [dbo].[XE_CheckParams]	 @Action  = 'Session Table'
+							,@Session = @Session output
+							,@Table   = @Table  output
 
 -- 1.3	@Option: проверка на наличие параметров:
 --					List (только вывод справочной информации) 
@@ -60,7 +61,7 @@ if upper(' '+@Option+' ') like upper('% ' + N'Skip'	+ N' %') Set @Skip = 'True'
 
 if (@Source is null) or ((OBJECT_ID(@Source, N'U') is null) and (OBJECT_ID(@Source, N'V') is null))
 	begin -- указанной Profiler table не существует
-		Set @Cmd =	 N' ' + @Version 
+		Set @Cmd =	 N'*** ' + @Version 
 					+ ' Error: Таблица с данными Profiler, указанная в параметре @Source="' 
 					+ coalesce(@Source, '<null>')	
 					+ N'" не существует, обработка невозможна"';			 
@@ -174,9 +175,9 @@ select @Count = COUNT(1) from ##tmp1
 -- ********** Step 3: Действия по @Option = 'List' ********** --
 
 if @List = 'TRUE'
-	print   	+N'*** Начало периода = ' + coalesce(cast(@Min_Time as nvarchar(20)), N'<null>')
-	+nchar(13)	+N'***  Конец периода = ' + coalesce(cast(@Max_Time as nvarchar(20)), N'<null>')
-	+nchar(13)	+N'*** Отобрано строк = ' + coalesce(cast(@Count as nvarchar(20)), N'<null>')
+	print   	+N'*** ' + @Version + ' Начало периода = ' + coalesce(cast(@Min_Time as nvarchar(20)), N'<null>')
+	+nchar(13)	+N'*** ' + @Version + ' Конец периода  = ' + coalesce(cast(@Max_Time as nvarchar(20)), N'<null>')
+	+nchar(13)	+N'*** ' + @Version + ' Отобрано строк = ' + coalesce(cast(@Count as nvarchar(20)),    N'<null>')
 
 if @Only = 'TRUE' Return
 
@@ -537,6 +538,7 @@ merge [dbo].[XEd_Hash] as [target]
 -- 5.1 Очищаем данные чтобы избежать их возможного дублирования
 		
 -- 5.2 Формируем данные для таблицы @Table в таблице #tmp3
+
 update ##tmp1
 set [Nt_username] = ''
 where [Nt_username] is null 
@@ -594,7 +596,7 @@ select		 cast([l].[DateTime_Stop] as date)							as [Date]
 
 --5.3 Если целевая таблица отсутствует, то создаем ее
 
-set @Option = @Option + N' INFO '
+set @Option = @Option + N' List '
 
 if  OBJECT_ID (@Table, N'U') IS NULL 
 	execute [dbo].[XE_ExecLog]	 @Proc		= N'[dbo].[XE_Install]', @Caller	= @Version	
@@ -622,6 +624,7 @@ if @Skip = 'FALSE'
 								,@Option	= @Option
 									
 -- ********** Step 6: Очистка по завершению  ********** --
+
 Drop table if exists #tmp0, ##tmp1, #tmp3, #Dir, #Files;
 
 	END	-- [dbo].[XE_Import_Profile]

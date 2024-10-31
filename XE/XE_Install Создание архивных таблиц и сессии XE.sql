@@ -4,8 +4,8 @@
 -- Description:	Создание архивных таблиц, индексов, ограничений, представлений, сессии XE
 -- =============================================
 	exec [dbo].[XE_Install] @Option	= 'replace /list /only /session Compression'	-- Опции выполнения
-		,@Session	= 'sql251'							-- сессия XE по умолчанию
-		,@Source	= 'C:\Документы\Проекты\Alidi\XE data\sql251\XE_Log_*.xel'	-- файлы .xel
+		,@Session	= 'sotivoli' -- 'sql251'							-- сессия XE по умолчанию
+		,@Source	= 'C:\temp\XE_Log_*.xel'	-- 'C:\Документы\Проекты\Alidi\XE data\sql251\XE_Log_*.xel'	-- файлы .xel
 		,@OrdersProc= '[dbo].[XE_Count_JDE]'			-- процедура по возврату числа заказов (JDE и пр.)
 
 		 
@@ -41,7 +41,7 @@ SET ANSI_NULLS ON;SET QUOTED_IDENTIFIER ON;
 
 -- 0.1 Определение переменных
 
-Declare  @Version			as nvarchar(30)		= 'XE_Install v 5.0.p'
+Declare  @Version			as nvarchar(30)		= 'XE_Install v 5.1'
 		,@Cmd				as nvarchar(max)
 		,@List				as bit				= 'FALSE'
 		,@Replace			as bit				= 'FALSE'
@@ -73,6 +73,7 @@ Set @Procedures = ltrim(rtrim(replace(replace(replace(replace('
 	XE_Count_JDE
 	XE_Clear
 	XE_CheckParams
+	XE_PrintParams
 	',NCHAR(9), ' '), nchar(10), ' '), nchar(13), ' '), ',', ' ')))
 
 -- 0.2 приведение параметра @Steps (заглавные, окружено пробелами) или null 
@@ -138,44 +139,18 @@ end  -- check procedures
 
 -- 0.7  Печать верхней отбивки
 
-if @Steps is null or @List = 'TRUE' print
-N'
-**************************************************************************
-***   '
-+left(@Version + replicate(' ', 30), 30)
-+N'Создание таблиц и представлений    ***
-**************************************************************************
-***'
+if @Steps is null or @List = 'TRUE' exec [dbo].[XE_PrintParams]  @Caller		= @Version
+																,@Option		= @Option
+																,@Steps			= @Steps
+																,@Session		= @Session
+																,@Table			= @Table
+																,@Source		= @Source
+																,@Records		= @Records
+																,@Percent		= @Percent
+																,@AddSum		= @AddSum
+																,@Offset		= @Offset
 
-if @List = 'TRUE'
-	print	N'***   ' + @Version + ' Параметры:'
-+nchar(13) +N'***   Опции выполнения (@Option) = ' + coalesce(@Option,	N'<null>')
-+nchar(13) +N'***                Шаги (@Steps) = ' + coalesce(@Steps,	N'<Все шаги>')
-+nchar(13) +N'***          Сессия XE (@Session) = ' + coalesce(@Session,N'null')
-+nchar(13) +N'***                       @Table = ' + coalesce(@Table,	N'null')
-+nchar(13) +N'***  Путь к файлам xel (@Source) = ' + coalesce(@Source,  N'null')
-+nchar(13) +N'***             Отбор (@Records) = ' + coalesce(str(cast(@Records as int)), N'<null>') + N' (top записей)'	
-+nchar(13) + N'***             Отбор (@Percent) = ' + coalesce(cast(@Percent as nvarchar(20)), N'<null>') + N' (% от общего ресурса)'	
-+nchar(13) + N'***              Отбор (@AddSum) = ' + coalesce(cast(@AddSum as nvarchar(20)), N'<null>') + N' (% нарастающим итогом)'	
-+nchar(13) + N'***      Срок хранения (@Offset) = ' + coalesce(str(cast(@Offset as int)), N'<null>') + N' (дней)'
-+nchar(13) +N'***               Опция @Replace = ' 
-			+ Case when @Replace = 'TRUE'
-				then N'"Заменить таблицы"' 
-				else N'"Создавать только новые таблицы"' 
-				end	
-+nchar(13) +N'***                Опция @Create = ' 
-			+ Case when @Create = 'TRUE'
-				then N'"Пересоздать XE сессию"' 
-				else N'"XE сессию не пересоздавать"' 
-				end
-+nchar(13) +N'***                  Опция @List = ' 
-			+ Case when @Only = 'TRUE'
-				then N'"Только выводить информацию, но не выполнять"' 
-				else N'"Вывести тнформацию и выполнить"' 
-				end
-+nchar(13) +N'***'
-
-if (@List & @Only) = 'TRUE' return
+if @Only = 'TRUE' return
 
 -- ********** Step 01 SUM: Таблица с суммарными ресурсами по дням **********
 
@@ -184,7 +159,7 @@ If		(@Steps is null	or @Steps like N'% SUM %')
 begin -- [XE_Sum]
 
 	drop table if exists [dbo].[XE_Sum]
-	print N'*** Step 01/17         SUM: Создание таблицы [dbo].[XE_Sum]'
+	print N'*** ' + @Version + ': Step 01/17          SUM: Создание таблицы     [dbo].[XE_Sum]'
 	CREATE TABLE [dbo].[XE_Sum] 
 		(
 		 [Session#]							[bigint]		NULL	-- Session Id
@@ -212,7 +187,7 @@ If		(@Steps is null	or @Steps like N'% LOG %')
 begin -- [XEd_Log]
 
 	drop table if exists[dbo].[XEd_Log]
-	print N'*** Step 02/17         LOG:	Создание справочника [dbo].[XEd_Log]'
+	print N'*** ' + @Version + ': Step 02/17          LOG: Создание справочника [dbo].[XEd_Log]'
 	create table [dbo].[XEd_Log] 
 	(
 	 [RowNumber]		[bigint]		NOT NULL IDENTITY(1,1) PRIMARY KEY	
@@ -259,7 +234,7 @@ If		(@Steps is null	or @Steps like N'% SOURCE %')
 begin -- [XEd_Source]
 
 	drop table if exists [dbo].[XEd_Source]
-	print N'*** Step 03/17      SOURCE:	Создание справочника [dbo].[XEd_Source]'
+	print N'*** ' + @Version + ': 03/17            SOURCE: Создание справочника [dbo].[XEd_Source]'
 	create table [dbo].[XEd_Source] 
 	(
 	 [DateTime]			[datetime2](7)	NULL	-- Дата выполнения процедуры
@@ -282,7 +257,7 @@ If		(@Steps is null	or @Steps like N'% HASH %')
 begin -- [XEd_Hash]
 
 	drop table if exists [dbo].[XEd_Hash]
-	print N'*** Step 04/17        HASH: Создагие справочника [dbo].[XEd_Hash]'
+	print N'*** ' + @Version + ' : 04/17             HASH: Создание справочника [dbo].[XEd_Hash]'
 	create table [dbo].[XEd_Hash] 
 		(
 		 [Hash#]						[bigint]	NOT NULL	IDENTITY(1,1) PRIMARY KEY
@@ -318,7 +293,7 @@ If		(@Steps is null	or @Steps like N'% HOST %')
 begin -- [XEd_Host]
 
 	drop table if exists [dbo].[XEd_Host]
-	print N'*** Step 05/17        HOST: Создание справочника [dbo].[XEd_Host]'
+	print N'*** ' + @Version + ': Step 05/17         HOST: Создание справочника [dbo].[XEd_Host]'
 	create table [dbo].[XEd_Host] 
 		(
 		 [Host#]			[bigint]	NOT NULL IDENTITY(1,1) PRIMARY KEY
@@ -340,7 +315,7 @@ If		(@Steps is null	or @Steps like N'% TABLE %')
 	and (object_id(N'[dbo].[XEd_Table]', N'U') is null or @Replace = 'TRUE')
 begin -- [XEd_Table]
 	drop table if exists [dbo].[XEd_Table]
-	print N'*** Step 06/17       TABLE: Создание справочника [dbo].[XEd_Table]'
+	print N'*** ' + @Version + ': Step 06/17        TABLE: Создание справочника [dbo].[XEd_Table]'
 	create table [dbo].[XEd_Table] 
 		(
 		 [Table#]		[bigint]		NOT NULL IDENTITY(1,1)  -- Table Id
@@ -371,7 +346,7 @@ If		(@Steps is null	or @Steps like N'% EXEC %')
 begin -- [XEd_Exec]
 
 	drop table if exists [dbo].[XEd_Exec]
-	print N'*** Step 07/17        EXEC: Создание справочника [dbo].[XEd_Exec]'
+	print N'*** ' + @Version + ': Step 07/17         EXEC: Создание справочника [dbo].[XEd_Exec]'
 	create table [dbo].[XEd_Exec] 
 		(
 		 [Exec#]		[bigint]		NOT NULL IDENTITY(1,1)  PRIMARY KEY -- Exec Id
@@ -402,7 +377,7 @@ If		(@Steps is null	or @Steps like N'% SESSION %')
 begin -- [XEd_Session]
 
 	drop table if exists [dbo].[XEd_Session]
-	print N'*** Step 08/17      SESSION: Создание справочника [dbo].[XEd_Session]'
+	print N'*** ' + @Version + ': Step 08/17      SESSION: Создание справочника [dbo].[XEd_Session]'
 	create table [dbo].[XEd_Session] 
 		(
 		 [Session#]		[bigint]		NOT NULL IDENTITY(1,1)  PRIMARY KEY -- Exec Id
@@ -425,7 +400,7 @@ If		(@Steps is null	or @Steps like N'% DATABASE %')
 begin -- [XEd_Database]
 
 	drop table if exists [dbo].[XEd_Database]
-	print N'*** Step 09/17    DATABASE: Создание справочника [dbo].[XEd_Database]'
+	print N'*** ' + @Version + ': Step 09/17     DATABASE: Создание справочника [dbo].[XEd_Database]'
 	create table [dbo].[XEd_Database] 
 		(
 		 [Database#]		[bigint]			NOT NULL IDENTITY(1,1)  PRIMARY KEY --  Id
@@ -452,7 +427,7 @@ If		(@Steps is null	or @Steps like N'% USER %')
 begin -- [XEd_User]
 
 	drop table if exists [dbo].[XEd_User]
-	print N'*** Step 10/17        USER: Создание справочника [dbo].[XEd_User]'
+	print N'*** ' + @Version + ': Step 10/17         USER: Создание справочника [dbo].[XEd_User]'
 	create table [dbo].[XEd_User] 
 		(
 		 [User#]		[bigint]		NOT NULL IDENTITY(1,1)  PRIMARY KEY -- Id
@@ -482,7 +457,7 @@ If		(@Steps is null	or @Steps like N'% EVENT %')
 begin -- [XEd_Event]
 
 	drop table if exists [dbo].[XEd_Event]
-	print N'*** Step 11/17       EVENT: Создание справочника [dbo].[XEd_Event]'
+	print N'*** ' + @Version + ': Step 11/17        EVENT: Создание справочника [dbo].[XEd_Event]'
 	create table [dbo].[XEd_Event] 
 		(
 		 [Event#]		[bigint]		NOT NULL IDENTITY(1,1)  PRIMARY KEY -- Id
@@ -511,7 +486,7 @@ If		(@Steps is null	or @Steps like N'% APPLICATION %')
 begin -- [XEd_Application]
 
 	drop table if exists [dbo].[XEd_Application]
-	print N'*** Step 12/17 APPLICATION: Создание справочника [dbo].[XEd_Application]'
+	print N'*** ' + @Version + ': Step 12/17  APPLICATION: Создание справочника [dbo].[XEd_Application]'
 	create table [dbo].[XEd_Application] 
 		(
 		 [Application#]	[bigint]		NOT NULL IDENTITY(1,1)  PRIMARY KEY -- Id
@@ -536,7 +511,7 @@ If		(@Steps is null	or @Steps like N'% RESULT %')
 begin -- [XEd_Result]
 
 	drop table if exists [dbo].[XEd_Result]
-	print N'*** Step 13/17      RESULT: Создание справочника [dbo].[XEd_Result]'
+	print N'*** ' + @Version + ': Step 13/17       RESULT: Создание справочника [dbo].[XEd_Result]'
 create table [dbo].[XEd_Result] 
 	(
 	 [Result#]		[bigint]		NOT NULL IDENTITY(1,1)  PRIMARY KEY -- Id
@@ -563,7 +538,7 @@ If		(@Steps is null	or @Steps like N'% OUTPUT %')
 begin -- [XEd_Output]
 
 	drop table if exists [dbo].[XEd_Output]
-	print N'*** Step 14/17      OUTPUT: Создание справочника [dbo].[XEd_Output]'
+	print N'*** ' + @Version + ':  Step 14/17      OUTPUT: Создание справочника [dbo].[XEd_Output]'
 	create table [dbo].[XEd_Output] 
 		(
 		 [Output#]				[bigint]	NOT NULL IDENTITY(1,1)  PRIMARY KEY -- Id
@@ -588,7 +563,7 @@ begin -- [XEd_Set]
 	if @Replace = 'TRUE' drop table if exists [dbo].[XEd_Set]
 
 
-	print N'*** Step 15/17         SET: Создание справочника [dbo].[XEd_Set]'
+	print N'*** ' + @Version + ': Step 15/17          SET: Создание справочника [dbo].[XEd_Set]'
 	CREATE TABLE [dbo].[XEd_Set]
 		(
 		 [Parameter]	[nvarchar](16)	NULL	-- имя параметра 
@@ -654,7 +629,7 @@ end -- [XEd_Set]
 If	( @Steps is null or  @Steps like N'% XEL %')
 BEGIN -- [dbo].[XE_]
 
-		print N'*** Step 16/17         XEL: Создание таблицы xel  и их представлений '
+		print N'*** ' + @Version + ': Step 16/17          XEL: Создание таблицы xel и её представления:'
 
 -- Создаем таблицу #tmp1 - перечень таблиц и представлений типа XEL
 
@@ -703,10 +678,10 @@ While @Ti <= (select count(1) from #tmp1)
 		if @Replace = 'TRUE' 
 			begin	-- delete table and view
 				set @Cmd = 'drop table if exists ' + @Table
-				if @List = 'TRUE' print N'***              	       Удаление таблицы: '+ @Table
+				if @List = 'TRUE' print N'*** ' + @Version + ':                   	       Удаление таблицы '+ @Table
 				exec sp_sqlexec @Cmd
 				set @Cmd = 'drop view if exists ' + @View
-				if @List = 'TRUE' print N'***                  Удаление представления: '+ @View
+				if @List = 'TRUE' print N'*** ' + @Version + ':                   	 Удаление представления '+ @View
 				exec sp_sqlexec @Cmd
 			end		-- delete table and view
 
@@ -715,7 +690,7 @@ While @Ti <= (select count(1) from #tmp1)
 		if object_id(@Table, 'U') is null 
 			begin		-- создаем таблицу @Table
 
-				print N'***                   	   Создание таблицы: '+ @Table
+				print N'*** ' + @Version + ':                   	       Создание таблицы '+ @Table
 				Set @Cmd =
 N'create table ' + @Table + ' '
 	+N'('
@@ -773,7 +748,7 @@ if @Compression = 'True' EXECUTE sp_executesql @Cmd
 
 		if object_id(@View, 'V') is null 
 			begin		-- создаем представление @View
-				print N'***                  Создание представления: ' + @View
+				print N'*** ' + @Version + ':                        Создание представления ' + @View
 				set @Cmd = 
  N'Create view ' + @View + N' '
 +N'as '
@@ -851,7 +826,7 @@ begin -- [XE_Top]
 
 	drop table if exists [dbo].[XE_Top]
 	drop view  if exists [dbo].[XEv_Top]
-	print N'*** Step 17/17     TOP:	   Создание таблицы [dbo].[XE_Top]'
+	print N'*** ' + @Version + ': Step 17/17          TOP:     Создание таблицы [dbo].[XE_Top]'
 	CREATE TABLE [dbo].[XE_Top] 
 		(
 		 [RowNumber]					[bigint]		NULL 
@@ -907,7 +882,7 @@ begin -- [XE_Top]
 		,[S%A]							[bit]			NULL	-- Spills
 		 ) 
 	on	[PRIMARY] 
-	print N'***                 	Создание представления [dbo].[XEv_Top]' 
+	print N'*** ' + @Version + ':                        Создание представления [dbo].[XEv_Top]' 
 
 -- Динамический SQL, т.к. Create view must be only first...
 
@@ -1015,7 +990,7 @@ if @Replace = 'TRUE' and NOT EXISTS(SELECT * FROM sys.server_event_sessions WHER
 
 if NOT EXISTS(SELECT * FROM sys.server_event_sessions WHERE name='XEs_' + @Session)
 	begin -- Create Session
-		print N'*** Step     SESSION:	Создание event session XEs_' + @Session + ' '
+		print N'*** ' + @Version + ':  Step 18        SESSION:   Создание XE сессии XEs_' + @Session + ' '
 
 		set @Cmd =
 		 N'Create event session XEs_' + @Session + ' on server '

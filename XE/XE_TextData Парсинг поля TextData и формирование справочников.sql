@@ -23,18 +23,16 @@ SET ANSI_NULLS ON;SET QUOTED_IDENTIFIER ON;
 -- ********** Step 0: Проверка корректности параметров ********** --
 -- 0.1 Инициализация
 
-Declare	 @Version	as nvarchar(30)		= 'XE_TextData v 5.0p'
+Declare	 @Version	as nvarchar(30)		= 'XE_TextData v 5.1'
 		,@Cmd		as nvarchar(max)
 		,@List		as bit				= 'FALSE'	--
 		,@Only		as bit				= 'FALSE'	--
 		,@NoClear	as bit				= 'FALSE'	-- 
 		,@Compact	as bit				= 'FALSE'	--
-		,@Offset	as int
-		,@Count		as int
+		,@Offset	as bigint
+		,@Count		as bigint
 
 -- 0.2 Проверка корректности и модификация входных данных
-
--- 0.2.1	@Option: проверка на наличие параметров:
 --					List	только вывод справочной информации
 --					Only	не выполнять запись в таблицу
 --					NoClear (не очищать таблицы от устаревших данных)
@@ -45,9 +43,10 @@ if upper(' ' + @Option + ' ')	like upper('% ' + 'List'	+ ' %')	Set @List		= 'TRU
 if upper(' ' + @Option + ' ')	like upper('% ' + 'Only'	+ ' %')	Set @Only		= 'TRUE'
 if upper(' ' + @Option + ' ')	like upper('% ' + 'Compact'	+ ' %')	Set @Compact	= 'TRUE'
 
--- 0.2 Проверка корректности и модификация входных данных
+-- 0.3 Проверка корректности и модификация входных данных
 
-exec [dbo].[XE_CheckParams]	 @Session = @Session output
+exec [dbo].[XE_CheckParams]	 @Action = 'Session'
+							,@Session = @Session output
 
 -- ********** Step 1: Чтение данных из XEd_Hash ********** --
 
@@ -112,21 +111,19 @@ Select	 [Hash#]
 
 Select @Count = count(1) from #tmp1
 
-if @List = 'TRUE'
-	print        '*** XE_TextData v5.0 параметры выполнения: '
-	+ nchar(13)	+N'***               @Session = ' + coalesce(@Session, '<null>')
-	+ nchar(13)	+N'***   Число строк отобрано = ' + coalesce(cast(@Count as nvarchar(20)), '<null>')
-	+ nchar(13)	+N'***               @Compact = ' + Case when @Compact = 'TRUE'	
-														then N'Не заполнять поле [Text]' 
-														else N' ,Заполнять все поля'											end	
+if @List = 'TRUE' exec	[dbo].[XE_PrintParams]	 @Caller		= 'XE_Import_Profiler 5.0d'
+												,@Session		= @Session
+												,@Count			= @Count
+												,@Option		= @Option
+
 if @Only = 'TRUE' 
 	begin
 		Drop table if exists #tmp1, #tmp3, #Dir, #Files;
 		return
 	end	
 
--- ********** Step 2: Удаляются комментарии типа /* ... */ ********** --
--- 2.1.	Рекурсивная обработка полей Text, разбивка по симовлу /* на 
+-- ********** Step 3: Удаляются комментарии типа /* ... */ ********** --
+-- 3.1.	Рекурсивная обработка полей Text, разбивка по симовлу /* на 
 --		левую часть ([Left]) и правую часть ([Right])
 --		левые части склеиваются, при [PatIndex] = 0 обработка закончена
 
@@ -151,7 +148,7 @@ as (
 		where patindex(N'%/*%',[Right]) > 0
 )
 
--- 2.2	Обновление поля Text в #tmp1 по данным [Left], 
+-- 3.2	Обновление поля Text в #tmp1 по данным [Left], 
 --		полученныи в рекурсивной процедуре comm
 
 Update #tmp1 
@@ -165,8 +162,10 @@ Update #tmp1
 		on	l.[Hash#] = r.[Hash#]
 	 where r.[Text] is not null
 	OPTION (MAXRECURSION 5000);
--- ********** Step 3. Удаление коротких комментариев (типа --... ) ********** --
---	3.1 Аналогично Step 2.1, но по границам '--' и символа новой строки char(10)
+
+-- ********** Step 4. Удаление коротких комментариев (типа --... ) ********** --
+
+--	4.1 Аналогично Step 3.1, но по границам '--' и символа новой строки char(10)
 --		вычленяем левую часть ([Left]) и правую часть ([Right])
 --		левые части склеиваются, при [PatIndex] = 0 обработка закончена
 
@@ -211,7 +210,7 @@ as (
 		from comm
 		where patindex(N'%--%',[Right]) > 0
 )
--- 3.2.	Обновление поля Text в #tmp1 по данным [Left], 
+-- 4.2.	Обновление поля Text в #tmp1 по данным [Left], 
 --		полученныи в рекурсивной процедуре comm
 
 Update #tmp1
@@ -231,8 +230,9 @@ Update #tmp1
 Update #tmp1
 	set [Text] = replace([Text], char(10), ' ');
 
--- ********** Step 4 Тонкая очистка от множественных пробелов ********** ---
--- 4.1.	Рекурсивная обработка полей Text, разбивка по симовлу '  ' на 
+-- ********** Step 5 Тонкая очистка от множественных пробелов ********** ---
+
+-- 5.1.	Рекурсивная обработка полей Text, разбивка по симовлу '  ' на 
 --		левую часть ([Left]) и правую часть ([Right])
 --		левые части склеиваются, при [PatIndex] = 0 обработка закончена
 
@@ -255,7 +255,7 @@ as (
 		where [Flag] > 0
 )
 
--- 4.2.	Обновление поля Text в #tmp1 по данным [Left], 
+-- 5.2.	Обновление поля Text в #tmp1 по данным [Left], 
 --		полученныи в рекурсивной процедуре comm
 
 Update #tmp1 
@@ -270,8 +270,8 @@ Update #tmp1
 		on	[l].[Hash#] = [r].[Hash#]
 	OPTION (MAXRECURSION 5000);
 
--- ********** Step 5 Выбор имен процедур и таблиц из текстов запросов во временные таблицы ********** --
--- 5.1.	Отбор строк, содержащих exec или from и их очистка
+-- ********** Step 6 Выбор имен процедур и таблиц из текстов запросов во временные таблицы ********** --
+-- 6.1.	Отбор строк, содержащих exec или from и их очистка
 
 Select	 [Hash#]
 		,ltrim(rtrim(
@@ -313,7 +313,7 @@ Select	 [Hash#]
 		into #tmp2 
 		from #tmp1 
 
--- 5.2.	Выбор одного слова после ключевых слов exec и from
+-- 6.2.	Выбор одного слова после ключевых слов exec и from
 
 Select	 [Hash#] 
 		,ltrim(rtrim(
@@ -345,7 +345,7 @@ Select	 [Hash#]
 	from #tmp2
 	where ' '+[Text] like '% exec %';
 
--- ********** Step 6 Избавляемся от конструкций вида @rc=@cmd=add_dic ********** --
+-- ********** Step 7 Избавляемся от конструкций вида @rc=@cmd=add_dic ********** --
 
 Update #tmp2e 
 	set [#tmp2e].[Exec] = r.[Exec]
@@ -361,8 +361,9 @@ Update #tmp2e
 				 ) as [r] 
 		on	[l].[Hash#] = [r].[Hash#]
 
--- ********** Step 7 Вычленяем компоненты имен Table ********** --
--- 7.1 Для имен процедур
+-- ********** Step 8 Вычленяем компоненты имен Table ********** --
+
+-- 8.1 Для имен процедур
 
 select	 [Hash#]
 		,[Exec]
@@ -374,7 +375,7 @@ select	 [Hash#]
 	from #tmp2e
 	where [Exec] is not null
 
--- 7.2 Для имен таблиц
+-- 8.2 Для имен таблиц
 select	 [Hash#]
 		,[Table]
 		,PARSENAME([Table], 1)					as [Table_Name]
@@ -386,8 +387,9 @@ select	 [Hash#]
 	where ([Table] is not null) 
 	  and ([Table] <> '::')
 
--- ********** Step 8: Обновление справочников по отобранным ранее данным ********** --
---8.1 Exec:
+-- ********** Step 9: Обновление справочников по отобранным ранее данным ********** --
+
+--9.1 Exec:
 
 if @NoClear <> 'TRUE' 
 	execute [dbo].[XE_ExecLog]	 @Proc = '[dbo].[XE_Clear]', @Caller = @Version
@@ -443,7 +445,7 @@ MERGE [dbo].[XEd_Exec] AS target
 							,source.[Cnt]
 							);
 
---8.2 Table:
+--9.2 Table:
 if @NoClear <> 'TRUE' 
 	execute [dbo].[XE_ExecLog]	 @Proc = '[dbo].[XE_Clear]', @Caller = @Version
 								,@Session = @Session
@@ -498,7 +500,7 @@ MERGE [dbo].[XEd_Table] AS target
 							,source.[Cnt]
 							);
 
---8.3 Hash:
+--9.3 Hash:
 
 if @NoClear <> 'TRUE' 
 	execute [dbo].[XE_ExecLog]	 @Proc = '[dbo].[XE_Clear]', @Caller = @Version
@@ -555,7 +557,7 @@ MERGE [dbo].[XEd_Hash] AS target
 		,target.[Text]		= case when @Compact = 'TRUE' then null else source.[Text] end
 		,target.[HashText]	= HASHBYTES('SHA2_256',source.[Text]);
 
--- ********** Step 9: Очистка по завершению  ********** --
+-- ********** Step 10: Очистка по завершению  ********** --
 
 Drop table if exists #tmp1, #tmp2, #tmp2e, #tmp2t, #tmp3e, #tmp3t 
 

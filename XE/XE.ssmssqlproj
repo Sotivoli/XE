@@ -23,62 +23,68 @@
     <LogicalFolder Name="Queries" Type="0" Sorted="true">
       <Items>
         <FileNode Name="XE_CheckParams Коррекция параметра @Table по @Server и справочнику XEd_Set.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SOTIVOLI:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SOTIVOLI</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>XE_CheckParams Коррекция параметра @Table по @Server и справочнику XEd_Set.sql</FullPath>
         </FileNode>
+        <FileNode Name="XE_PrintParams Печать параметров.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SOTIVOLI:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SOTIVOLI</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>XE_PrintParams Печать параметров.sql</FullPath>
+        </FileNode>
         <FileNode Name="XE_Clear Очистка таблиц от архивных данных.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SOTIVOLI:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SOTIVOLI</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>XE_Clear Очистка таблиц от архивных данных.sql</FullPath>
         </FileNode>
         <FileNode Name="XE_Convert Конвертация данных из таблиц Profiler или XE 4.4.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SOTIVOLI:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SOTIVOLI</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>XE_Convert Конвертация данных из таблиц Profiler или XE 4.4.sql</FullPath>
         </FileNode>
         <FileNode Name="XE_Count_Dummy Запрос числа операций в JDE.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SOTIVOLI:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SOTIVOLI</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>XE_Count_Dummy Запрос числа операций в JDE.sql</FullPath>
         </FileNode>
         <FileNode Name="XE_Count_JDE Запрос числа операций в JDE.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SOTIVOLI:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SOTIVOLI</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>XE_Count_JDE Запрос числа операций в JDE.sql</FullPath>
         </FileNode>
         <FileNode Name="XE_Daily Ежедневный сбор данных.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SOTIVOLI:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SOTIVOLI</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>XE_Daily Ежедневный сбор данных.sql</FullPath>
         </FileNode>
         <FileNode Name="XE_Day Создание архива топ запросов.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SOTIVOLI:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SOTIVOLI</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>XE_Day Создание архива топ запросов.sql</FullPath>
         </FileNode>
         <FileNode Name="XE_ExecLog Выполненние процедуры с журналированием.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SOTIVOLI:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SOTIVOLI</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>XE_ExecLog Выполненние процедуры с журналированием.sql</FullPath>
         </FileNode>
         <FileNode Name="XE_Import_Profile Импорт данных Profiler за период.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SOTIVOLI:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SOTIVOLI</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>XE_Import_Profile Импорт данных Profiler за период.sql</FullPath>
         </FileNode>
         <FileNode Name="XE_Import_XE44 Импорт данных XE 4.4 за период.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SOTIVOLI:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SOTIVOLI</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>XE_Import_XE44 Импорт данных XE 4.4 за период.sql</FullPath>
         </FileNode>
@@ -89,20 +95,20 @@
           <FullPath>XE_Install Создание архивных таблиц и сессии XE.sql</FullPath>
         </FileNode>
         <FileNode Name="XE_TextData Парсинг поля TextData и формирование справочников.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SOTIVOLI:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SOTIVOLI</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>XE_TextData Парсинг поля TextData и формирование справочников.sql</FullPath>
         </FileNode>
         <FileNode Name="XE_TopSum Создание архива топ запросов.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SOTIVOLI:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SOTIVOLI</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>XE_TopSum Создание архива топ запросов.sql</FullPath>
         </FileNode>
         <FileNode Name="XE_Xel Создание архива всех текущих запросов.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SOTIVOLI:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SOTIVOLI</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>XE_Xel Создание архива всех текущих запросов.sql</FullPath>
         </FileNode>

@@ -36,7 +36,7 @@ GO
 -- ********** Step 0: Инициализация ********** --
 		
 SET ANSI_NULLS ON;SET QUOTED_IDENTIFIER ON;
-Declare	 @Version		as nvarchar(30)	= N'XE_Import_XE44 v5.0.d'
+Declare	 @Version		as nvarchar(30)	= N'XE_Import_XE44 v5.1'
 		,@Cmd			as nvarchar(max)
 		,@Date			as date
 		,@MaxDate		as date
@@ -51,12 +51,13 @@ Declare	 @Version		as nvarchar(30)	= N'XE_Import_XE44 v5.0.d'
 		,@TimeShift		as int			= datediff(hh, getutcdate(), getdate())
 
 -- **********  Step 1: Проверка параметров вызова ********** --
--- 0.2 Проверка корректности и модификация входных данных
+-- 1.1 Проверка корректности и модификация входных данных
 
-exec [dbo].[XE_CheckParams]	 @Session = @Session output
-							,@Table   = @Table  output
+exec [dbo].[XE_CheckParams]	 @Action  = 'Session Table'
+							,@Session = @Session output
+							,@Table   = @Table   output
 
--- 1.3	@Option: проверка на наличие параметров:
+-- 1.2	@Option: проверка на наличие параметров:
 --					List (только вывод справочной информации) 
 --					NoDB (не заполнять поля DBname - имя БД по id БД)
 --					Only (только информация,  не выполнять действия)
@@ -66,7 +67,7 @@ if upper(' '+@Option+' ') like upper(N'% ' + N'NoDB'	+ N' %') Set @NoDB = 'True'
 if upper(' '+@Option+' ') like upper(N'% ' + N'Only'	+ N' %') Set @Only = 'True'
 if upper(' '+@Option+' ') like upper(N'% ' + N'SKIP'	+ N' %') Set @Skip = 'True'
 
--- 1.4	@Source: проверка на наличие таблицы с данными Profiler:
+-- 1.3	@Source: проверка на наличие таблицы с данными Profiler:
 
 if (@Source is null) or ((OBJECT_ID(@Source, N'U') is null) and (OBJECT_ID(@Source, N'V') is null))
 	begin -- указанной Profiler table не существует
@@ -78,7 +79,7 @@ if (@Source is null) or ((OBJECT_ID(@Source, N'U') is null) and (OBJECT_ID(@Sour
 		return --(8)
 	end -- указанной Profiler table не существует
 
---1.5 Если целевая таблица отсутствует, то делаем ее по образу и подобию Log_XE
+--1.4 Если целевая таблица отсутствует, то делаем ее по образу и подобию Log_XE
 
 if  OBJECT_ID (@Table, N'U') IS NULL 
 	execute [dbo].[XE_ExecLog]	 @Proc		= N'[dbo].[XE_Install]', @Caller	= @Version	
@@ -87,7 +88,7 @@ if  OBJECT_ID (@Table, N'U') IS NULL
 								,@Table		= @Table
 								,@Option	= @Option
 
--- 2.2 Считываем данные в ##tmp1
+-- ********** Step 2: Считываем данные в ##tmp1 ********** --
 
 drop table if exists ##tmp1	
 
@@ -189,9 +190,9 @@ select @Count = COUNT(1) from ##tmp1
 -- ********** Step 3: Действия по @Option = 'List' ********** --
 
 if @List = 'TRUE'
-	print   	+N'*** Начало периода = ' + coalesce(cast(@Min_Time as nvarchar(20)), N'<null>')
-	+nchar(13)	+N'***  Конец периода = ' + coalesce(cast(@Max_Time as nvarchar(20)), N'<null>')
-	+nchar(13)	+N'*** Отобрано строк = ' + coalesce(cast(@Count as nvarchar(20)),    N'<null>')
+	print   	+N'*** ' + @Version + ' Начало периода = ' + coalesce(cast(@Min_Time as nvarchar(20)), N'<null>')
+	+nchar(13)	+N'*** ' + @Version + ' Конец периода  = ' + coalesce(cast(@Max_Time as nvarchar(20)), N'<null>')
+	+nchar(13)	+N'*** ' + @Version + ' Отобрано строк = ' + coalesce(cast(@Count as nvarchar(20)),    N'<null>')
 
 if @Only = 'TRUE' Return
 
@@ -637,6 +638,7 @@ if @Skip = 'FALSE'
 								,@Option	= @Option
 									
 -- ********** Step 6: Очистка по завершению  ********** --
+
 Drop table if exists #tmp0, ##tmp1, #tmp3, #Dir, #Files;
 
 	END	-- [dbo].[XE_Import_XE44]
