@@ -9,3 +9,5 @@ Installation:
 3) Schedule XE_Daily procedert for collect data
 
 Also look .doc file for documentation (in Russian)
+
+Previous version are in XE old repository
